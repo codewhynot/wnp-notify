@@ -1,17 +1,26 @@
 class Notify {
-    constructor ({...params}) {
+    constructor ({...params} = {}) {
 
-        const {customClass, defaultMessage, maxCount} = params;
+        const {
+            customClass,
+            defaultMessage,
+            maxCount,
+            customID,
+            debounceDelay,
+            showTime,
+        } = params;
 
         this.body = document.querySelector('body');
-        this.defaultMessage = defaultMessage !== undefined && defaultMessage !== ''
-            ? defaultMessage : 'Whynotpack notify! ;)';
+        this.id = customID ? customID : this.randomID(5);
+        this.defaultMessage = defaultMessage ? defaultMessage : 'Whynotpack notify! ;)';
+        this.customClass = customClass ? customClass : 'default';
+        this.maxCount = maxCount ? maxCount : 5;
+        this.debounceDelay = debounceDelay ? debounceDelay : 0.3;
+        this.showTime = showTime ? showTime : 2;
 
-        this.customClass = customClass !== undefined && customClass !== ''
-            ? customClass : 'default';
+        //init wrapper
+        this.appendWrapper(this.id);
 
-        this.maxCount = maxCount !== undefined && maxCount < 10
-            ? maxCount : 5;
     }
     make (tag) {
         return document.createElement(tag);
@@ -40,6 +49,20 @@ class Notify {
         return result.join('');
     }
 
+    createWrapper (id) {
+        const wrapper = this.make('div');
+        wrapper.classList.add('notify__wrapper');
+        wrapper.setAttribute('id', id);
+        return wrapper;
+    }
+
+    debounce (callback, delay) {
+        clearTimeout(this.timeout);
+        this.timeout = setTimeout(() => {
+            callback();
+        }, delay)
+    }
+
     createElement (type,data) {
         const notifyType = type === 'e' ? 'error' : type === 's' ? 'success' : 'warning';
 
@@ -53,10 +76,9 @@ class Notify {
         const text = this.make('span');
 
         //adding classes
-        box.classList.add('notify');
+        box.classList.add('notify' + this.id);
         box.classList.add(this.customClass);
         box.classList.add(notifyType);
-        box.setAttribute('id', this.randomID(3));
         icon.classList.add('notify__icon');
         description.classList.add('notify__description');
         text.classList.add('notify__text');
@@ -68,6 +90,28 @@ class Notify {
         box.appendChild(description);
 
         return box;
+    }
+
+    showElement (type, data) {
+        const area = document.querySelector('#' + this.id);
+        area.appendChild(this.createElement(type,data))
+    }
+
+    appendWrapper (id) {
+        const wrapper = this.createWrapper(id);
+        this.body.appendChild(wrapper);
+    }
+
+    getLength () {
+        const items = document.querySelectorAll('.notify' + this.id);
+        return [...items].length;
+    }
+
+    message (type, data) {
+        if (this.getLength() >= this.maxCount) return false;
+        this.debounce(() => {
+            this.showElement(type,data);
+        }, this.debounceDelay * 1000);
     }
 }
 
