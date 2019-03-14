@@ -97,7 +97,7 @@ class Notify {
         title.textContent = notifyText;
         desc.textContent = 'View details';
         description.appendChild(title);
-        description.appendChild(desc);
+        // description.appendChild(desc);
         box.appendChild(description);
         callback(box,notifyID);
     }
