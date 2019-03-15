@@ -12,5 +12,10 @@
   "bugs": {
     "url": "https://github.com/codewhynot/wnp-notify/issues"
   },
-  "homepage": "https://github.com/codewhynot/wnp-notify#readme"
+  "homepage": "https://github.com/codewhynot/wnp-notify#readme",
+  "dependencies": {
+    "gsap": "^2.1.2",
+    "jquery": "^3.3.1",
+    "style-inject": "^0.3.0"
+  }
 }
