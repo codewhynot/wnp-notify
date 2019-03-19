@@ -1,6 +1,6 @@
 {
   "name": "@wnp/notify",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Notify lib for your site",
   "main": "index.js",
   "repository": {

@@ -204,47 +204,30 @@ class Notify {
         return element;
     }
 
-    mouseMove (evt, id) {
-        const x = evt.clientX - window.innerWidth + 150;
-        console.log(x);
-        if (x <= -75) {
-            TweenLite.to(`#${id}`, 0.5, {x: -100, opacity: 0, onComplete: () => {
-                    this.deleteNotify(id);
-                }})
-        } else if (x < 75 && x > -75) {
-            TweenLite.to(`#${id}`, 0.3, {x: 0});
-        } else {
-            TweenLite.to(`#${id}`, 0.3, {x: 100, opacity: 0, onComplete: () => {
-                    this.deleteNotify(id);
-                }});
-        }
-
-    }
-
-    touchMove (evt, id) {
-        const x = evt.changedTouches[0].clientX - window.innerWidth + 160;
-        console.log(x);
-        if (x <= -75) {
-            TweenLite.to(`#${id}`, 0.5, {x: -100, opacity: 0, onComplete: () => {
-                    setTimeout(() => {
-                        this.deleteNotify(id);
-                    }, 100);
-                }})
-        } else if (x < 75 && x > -75) {
-            TweenLite.to(`#${id}`, 0.3, {x: 0});
-        } else {
-            TweenLite.to(`#${id}`, 0.3, {x: 100, opacity: 0, onComplete: () => {
-                    setTimeout(() => {
-                        this.deleteNotify(id);
-                    }, 100);
-                }});
-        }
+    move (type, evt, id, client) {
+        const point = type === 'touch' ? client.targetTouches[0].clientX : client.clientX;
+        const x = type === 'touch' ? evt.changedTouches[0].clientX - point : evt.clientX - point;
+        let opacity = 0;
+        TweenLite.to(`#${id}`, 0.2, {x: x, onUpdate: () => {
+                if (x < -40 || x > 40) {
+                    opacity--
+                    opacity = opacity / 2
+                } else {
+                    opacity = 1;
+                }
+                TweenLite.to(`#${id}`, 0.3, {opacity: opacity, onComplete: () => {
+                        if (opacity < 0.8) {
+                            TweenLite.to(`#${id}`, 0, {opacity: 0});
+                            this.deleteNotify(id);
+                        }
+                    }})
+            }});
     }
 
     moveEvent (event, id) {
         if (event.type === 'mousedown') {
             $(window).on('mousemove', (mouse) => {
-                this.mouseMove(mouse, id);
+                this.move('mouse', mouse, id, event);
             });
             $(window).on('mouseup',  () => {
                 $(window).unbind('mousemove',null);
@@ -256,7 +239,7 @@ class Notify {
             });
         } else {
             $(window).on('touchmove',  (touch) => {
-                this.touchMove(touch, id);
+                this.move('touch', touch, id,event);
             });
             $(window).on('touchend',  () => {
                 $(window).unbind('touchmove',null);
@@ -265,10 +248,20 @@ class Notify {
         }
     }
 
+    checkChildren () {
+        const area = document.querySelector(`#${this.state.WRAPPER_ID}`);
+        return [...area.children];
+    }
+
     addNotify (state, callback) {
         const target = this.getElement(state);
         const area = document.querySelector(`#${this.state.WRAPPER_ID}`);
         area.appendChild(target);
+        if (this.checkChildren().length <= 0) {
+            area.appendChild(target);
+        } else {
+            area.insertBefore(target, this.checkChildren()[0]);
+        }
         [...target.children].forEach(item => {
             [...item.children].forEach(child => {
                 if (child.className === 'wnp-notify__desc') {
@@ -306,7 +299,7 @@ class Notify {
             setTimeout(() => {
                 area.removeChild(element);
                 this.updateState(element);
-            }, 50)
+            }, 10)
         });
     }
 

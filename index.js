@@ -262,77 +262,47 @@ var Notify =
                 return element;
             }
         }, {
-            key: "mouseMove",
-            value: function mouseMove(evt, id) {
+            key: "move",
+            value: function move(type, evt, id, client) {
                 var _this4 = this;
 
-                var x = evt.clientX - window.innerWidth + 150;
-                console.log(x);
+                var point = type === 'touch' ? client.targetTouches[0].clientX : client.clientX;
+                var x = type === 'touch' ? evt.changedTouches[0].clientX - point : evt.clientX - point;
+                var opacity = 0;
 
-                if (x <= -75) {
-                    _gsap.TweenLite.to("#".concat(id), 0.5, {
-                        x: -100,
-                        opacity: 0,
-                        onComplete: function onComplete() {
-                            _this4.deleteNotify(id);
+                _gsap.TweenLite.to("#".concat(id), 0.2, {
+                    x: x,
+                    onUpdate: function onUpdate() {
+                        if (x < -40 || x > 40) {
+                            opacity--;
+                            opacity = opacity / 2;
+                        } else {
+                            opacity = 1;
                         }
-                    });
-                } else if (x < 75 && x > -75) {
-                    _gsap.TweenLite.to("#".concat(id), 0.3, {
-                        x: 0
-                    });
-                } else {
-                    _gsap.TweenLite.to("#".concat(id), 0.3, {
-                        x: 100,
-                        opacity: 0,
-                        onComplete: function onComplete() {
-                            _this4.deleteNotify(id);
-                        }
-                    });
-                }
-            }
-        }, {
-            key: "touchMove",
-            value: function touchMove(evt, id) {
-                var _this5 = this;
 
-                var x = evt.changedTouches[0].clientX - window.innerWidth + 160;
-                console.log(x);
+                        _gsap.TweenLite.to("#".concat(id), 0.3, {
+                            opacity: opacity,
+                            onComplete: function onComplete() {
+                                if (opacity < 0.8) {
+                                    _gsap.TweenLite.to("#".concat(id), 0, {
+                                        opacity: 0
+                                    });
 
-                if (x <= -75) {
-                    _gsap.TweenLite.to("#".concat(id), 0.5, {
-                        x: -100,
-                        opacity: 0,
-                        onComplete: function onComplete() {
-                            setTimeout(function () {
-                                _this5.deleteNotify(id);
-                            }, 100);
-                        }
-                    });
-                } else if (x < 75 && x > -75) {
-                    _gsap.TweenLite.to("#".concat(id), 0.3, {
-                        x: 0
-                    });
-                } else {
-                    _gsap.TweenLite.to("#".concat(id), 0.3, {
-                        x: 100,
-                        opacity: 0,
-                        onComplete: function onComplete() {
-                            setTimeout(function () {
-                                _this5.deleteNotify(id);
-                            }, 100);
-                        }
-                    });
-                }
+                                    _this4.deleteNotify(id);
+                                }
+                            }
+                        });
+                    }
+                });
             }
         }, {
             key: "moveEvent",
             value: function moveEvent(event, id) {
-                var _this6 = this;
+                var _this5 = this;
 
                 if (event.type === 'mousedown') {
                     (0, _jquery.default)(window).on('mousemove', function (mouse) {
-                        _this6.mouseMove(mouse, id);
+                        _this5.move('mouse', mouse, id, event);
                     });
                     (0, _jquery.default)(window).on('mouseup', function () {
                         (0, _jquery.default)(window).unbind('mousemove', null);
@@ -344,7 +314,7 @@ var Notify =
                     });
                 } else {
                     (0, _jquery.default)(window).on('touchmove', function (touch) {
-                        _this6.touchMove(touch, id);
+                        _this5.move('touch', touch, id, event);
                     });
                     (0, _jquery.default)(window).on('touchend', function () {
                         (0, _jquery.default)(window).unbind('touchmove', null);
@@ -353,28 +323,40 @@ var Notify =
                 }
             }
         }, {
+            key: "checkChildren",
+            value: function checkChildren() {
+                var area = document.querySelector("#".concat(this.state.WRAPPER_ID));
+                return _toConsumableArray(area.children);
+            }
+        }, {
             key: "addNotify",
             value: function addNotify(state, callback) {
-                var _this7 = this;
+                var _this6 = this;
 
                 var target = this.getElement(state);
                 var area = document.querySelector("#".concat(this.state.WRAPPER_ID));
                 area.appendChild(target);
 
+                if (this.checkChildren().length <= 0) {
+                    area.appendChild(target);
+                } else {
+                    area.insertBefore(target, this.checkChildren()[0]);
+                }
+
                 _toConsumableArray(target.children).forEach(function (item) {
                     _toConsumableArray(item.children).forEach(function (child) {
                         if (child.className === 'wnp-notify__desc') {
-                            document.querySelector("#".concat(target.id, " .wnp-notify__desc")).addEventListener('click', _this7.openNotify.bind(_this7, target.id));
+                            document.querySelector("#".concat(target.id, " .wnp-notify__desc")).addEventListener('click', _this6.openNotify.bind(_this6, target.id));
                         }
                     });
                 });
 
                 document.querySelector("#".concat(target.id, " .wnp-notify__close")).addEventListener('click', this.closeNotify.bind(this, target.id));
                 (0, _jquery.default)("#".concat(target.id)).bind('mousedown', function (mouse) {
-                    _this7.moveEvent(mouse, target.id);
+                    _this6.moveEvent(mouse, target.id);
                 });
                 (0, _jquery.default)("#".concat(target.id)).bind('touchstart', function (touch) {
-                    _this7.moveEvent(touch, target.id);
+                    _this6.moveEvent(touch, target.id);
                 });
                 if (callback) callback(target);
             }
@@ -406,30 +388,30 @@ var Notify =
         }, {
             key: "deleteNotify",
             value: function deleteNotify(target) {
-                var _this8 = this;
+                var _this7 = this;
 
                 this.hideNotify(target, function () {
-                    var area = document.querySelector("#".concat(_this8.state.WRAPPER_ID));
+                    var area = document.querySelector("#".concat(_this7.state.WRAPPER_ID));
                     var element = document.querySelector("#".concat(target));
                     setTimeout(function () {
                         area.removeChild(element);
 
-                        _this8.updateState(element);
-                    }, 50);
+                        _this7.updateState(element);
+                    }, 10);
                 });
             }
         }, {
             key: "makeNotify",
             value: function makeNotify(data) {
-                var _this9 = this;
+                var _this8 = this;
 
                 this.createNotify(data, function (notify) {
-                    _this9.saveNotify(notify, function (prevState, newState) {
-                        _this9.addNotify({
+                    _this8.saveNotify(notify, function (prevState, newState) {
+                        _this8.addNotify({
                             prevState: prevState,
                             newState: newState
                         }, function (target) {
-                            _this9.showNotify(target);
+                            _this8.showNotify(target);
                         });
                     });
                 });
