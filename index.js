@@ -39,21 +39,18 @@ var Notify =
 
             var initial_state = props ? props : {};
             var max_count = initial_state.max_count,
-                auto_delete = initial_state.auto_delete,
                 default_message = initial_state.default_message,
-                delay = initial_state.delay,
                 selector = initial_state.selector,
-                custom_class = initial_state.custom_class,
-                link_title = initial_state.link_title;
+                link_title = initial_state.link_title,
+                default_class = initial_state.default_class,
+                default_styles = initial_state.default_styles;
             this.default_state = {
-                MAX_COUNT: max_count ? max_count : 5,
-                AUTO_DELETE: auto_delete ? auto_delete : false,
+                DEFAULT_STYLES: default_styles === false ? false : true,
+                MAX_COUNT: max_count ? Number(max_count) : 5,
                 DEFAULT_MESSAGE: default_message ? default_message : 'Whynotpack notify',
-                DEFAULT_LINK_TITLE: link_title ? link_title : 'more',
-                SHOW_TIME: delay ? delay * 1000 : 5 * 1000,
-                SELECTOR: selector ? document.querySelector(selector) : document.querySelector('body'),
-                DEFAULT_CLASS: custom_class ? custom_class : 'default',
-                STYLES__APPEND__AREA: document.getElementsByTagName('HEAD')
+                DEFAULT_CLASS: default_class ? default_class : 'default',
+                DEFAULT_LINK_TITLE: link_title ? link_title : 'Show',
+                SELECTOR: selector ? document.querySelector(selector) : document.querySelector('body')
             };
             this.state = {
                 WRAPPER_ID: null,
@@ -62,7 +59,9 @@ var Notify =
             }; //init notify
 
             this.addWrapper(function () {
-                _this.addStyles();
+                if (_this.default_state.DEFAULT_STYLES) {
+                    _this.addStyles();
+                }
             });
             return this.makeNotify.bind(this);
         } //helpers
@@ -125,7 +124,7 @@ var Notify =
         }, {
             key: "addStyles",
             value: function addStyles() {
-                var stylesString = '@import url(https://fonts.googleapis.com/css?family=Roboto:300,500);\n' + '@charset "UTF-8";.wnp-notify{width:300px;height:auto;margin:10px;-webkit-box-shadow:0 0 5px 0 rgba(0,0,0,.3);box-shadow:0 0 5px 0 rgba(0,0,0,.3);display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:start;-ms-flex-pack:start;justify-content:flex-start;background:#75a7be;color:#fff;position:relative;padding-left:60px;padding-right:30px;-webkit-transform:scale(.5) translateY(-30px);-ms-transform:scale(.5) translateY(-30px);transform:scale(.5) translateY(-30px);opacity:0}.wnp-notify,.wnp-notify>*{-webkit-box-sizing:border-box;box-sizing:border-box}@media (max-width:600px){.wnp-notify{width:calc(100% - 20px)}}.wnp-notify.isVisible{-webkit-transform:scale(1);-ms-transform:scale(1);transform:scale(1);opacity:1}.wnp-notify.error{background:#c74444}.wnp-notify.success{background:#3eb56e}.wnp-notify__wrapper{position:fixed;right:0;top:0;z-index:9999;font-family:Roboto,sans-serif}@media (max-width:600px){.wnp-notify__wrapper{width:100%}}.wnp-notify__wrapper.isVisible{opacity:1;visibility:visible}.wnp-notify__close{position:absolute;width:20px;height:20px;right:5px;top:5px;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;-webkit-box-align:center;-ms-flex-align:center;align-items:center;cursor:pointer}.wnp-notify__close:after{content:"✖";color:#fff;font-size:16px;font-weight:300;line-height:1}.wnp-notify__description{height:100%;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-align:start;-ms-flex-align:start;align-items:flex-start;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;padding:10px 0}.wnp-notify__message{height:0;overflow:hidden;font-size:14px;line-height:1.5;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.isOpen .wnp-notify__message{height:auto}.wnp-notify__text{font-size:16px;margin:5px 0;line-height:1.5}.wnp-notify__desc,.wnp-notify__text{font-weight:300;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.wnp-notify__desc{font-size:13px;cursor:pointer;line-height:1}.isOpen .wnp-notify__desc{display:none}.wnp-notify__icon{width:40px;height:100%;left:0;top:0;position:absolute;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;-webkit-box-align:center;-ms-flex-align:center;align-items:center;margin-right:20px}.wnp-notify__icon:before{content:"";position:absolute;width:100%;height:100%;top:0;left:0;background:#5291ae;-ms-flex-negative:0;flex-shrink:0;z-index:0}.error .wnp-notify__icon:before{background:#a90d0e}.success .wnp-notify__icon:before{background:#319f5d}.wnp-notify__icon:after{content:"!";-ms-flex-negative:0;flex-shrink:0;position:relative;font-size:20px;z-index:1;font-weight:600;line-height:1;color:#fff}.success .wnp-notify__icon:after{content:"✔"}.error .wnp-notify__icon:after{content:"✖"}\n';
+                var stylesString = '@import url(https://fonts.googleapis.com/css?family=Roboto:300,500);\n' + '@charset "UTF-8";.wnp-notify{width:300px;height:auto;margin:10px;-webkit-box-shadow:0 0 5px 0 rgba(0,0,0,.3);box-shadow:0 0 5px 0 rgba(0,0,0,.3);display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:start;-ms-flex-pack:start;justify-content:flex-start;background:#75a7be;color:#fff;position:relative;padding-left:60px;padding-right:30px;-webkit-transform:scale(.5) translateY(-30px);-ms-transform:scale(.5) translateY(-30px);transform:scale(.5) translateY(-30px);opacity:0}.wnp-notify,.wnp-notify>*{-webkit-box-sizing:border-box;box-sizing:border-box}@media (max-width:600px){.wnp-notify{width:calc(100% - 20px)}}.wnp-notify.isVisible{-webkit-transform:scale(1);-ms-transform:scale(1);transform:scale(1);opacity:1}.wnp-notify.error{background:#c74444}.wnp-notify.success{background:#3eb56e}.wnp-notify__wrapper{position:fixed;right:0;top:0;z-index:9999;font-family:Roboto,sans-serif}@media (max-width:600px){.wnp-notify__wrapper{width:100%}}.wnp-notify__wrapper.isVisible{opacity:1;visibility:visible}.wnp-notify__close{position:absolute;width:20px;height:20px;right:5px;top:5px;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;-webkit-box-align:center;-ms-flex-align:center;align-items:center;cursor:pointer}.wnp-notify__close:after{content:"✖";color:#fff;font-size:16px;font-weight:300;line-height:1}.wnp-notify__description{width:100%;height:100%;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-align:start;-ms-flex-align:start;align-items:flex-start;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;padding:10px 0}.wnp-notify__message{width:100%;height:0;overflow:hidden;font-size:14px;line-height:1.5;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.isOpen .wnp-notify__message{height:auto}.wnp-notify__text{font-size:16px;margin:5px 0;line-height:1.5}.wnp-notify__desc,.wnp-notify__text{font-weight:300;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.wnp-notify__desc{font-size:13px;cursor:pointer;line-height:1}.isOpen .wnp-notify__desc{display:none}.wnp-notify__icon{width:40px;height:100%;left:0;top:0;position:absolute;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;-webkit-box-align:center;-ms-flex-align:center;align-items:center;margin-right:20px}.wnp-notify__icon:before{content:"";position:absolute;width:100%;height:100%;top:0;left:0;background:#5291ae;-ms-flex-negative:0;flex-shrink:0;z-index:0}.error .wnp-notify__icon:before{background:#a90d0e}.success .wnp-notify__icon:before{background:#319f5d}.wnp-notify__icon:after{content:"!";-ms-flex-negative:0;flex-shrink:0;position:relative;font-size:20px;z-index:1;font-weight:600;line-height:1;color:#fff}.success .wnp-notify__icon:after{content:"✔"}.error .wnp-notify__icon:after{content:"✖"}\n';
                 (0, _styleInject.default)(stylesString);
             }
         }, {
@@ -156,7 +155,11 @@ var Notify =
                     title = data.title,
                     description = data.description,
                     link_title = data.link_title,
-                    custom_class = data.custom_class; //variables
+                    custom_class = data.custom_class,
+                    auto_delete = data.auto_delete,
+                    delay = data.delay;
+                var AUTO_DELETE = auto_delete ? auto_delete : false;
+                var DELAY = delay ? delay * 1000 : 5000; //variables
 
                 var notify_type = type && type === 'error' || type === 'success' || type === 'info' ? type : 'no_type';
                 var notify_class_name = custom_class ? custom_class.toString() : this.default_state.DEFAULT_CLASS;
@@ -204,16 +207,31 @@ var Notify =
                     notify_text_area.appendChild(notify_link);
                 }
 
-                if (callback) callback(notify);
+                if (callback) callback({
+                    element: notify,
+                    state: {
+                        auto_delete: AUTO_DELETE,
+                        delay: DELAY
+                    }
+                });
             }
         }, {
             key: "saveNotify",
-            value: function saveNotify(element, callback) {
+            value: function saveNotify(data, callback) {
+                var element = data.element,
+                    state = data.state;
+
                 if (this.state.NOTIFIES.length < this.default_state.MAX_COUNT) {
-                    this.state.NOTIFIES.push(element);
+                    this.state.NOTIFIES.push({
+                        elem: element,
+                        currentState: state
+                    });
                     if (callback) callback(this.state.NOTIFIES, this.state.WAITING_NOTIFIES);
                 } else {
-                    this.state.WAITING_NOTIFIES.push(element);
+                    this.state.WAITING_NOTIFIES.push({
+                        elem: element,
+                        currentState: state
+                    });
                     if (callback) callback(this.state.NOTIFIES, this.state.WAITING_NOTIFIES);
                 }
             }
@@ -229,7 +247,7 @@ var Notify =
                 var _this3 = this;
 
                 this.state.NOTIFIES.forEach(function (target, i) {
-                    if (target.id === data.id) {
+                    if (target.elem.id === data.id) {
                         _this3.state.NOTIFIES.splice(i, 1);
                     }
                 });
@@ -239,11 +257,13 @@ var Notify =
                     this.state.NOTIFIES.push(waitingElement);
                     this.addNotify({
                         prevState: this.state.NOTIFIES
-                    }, function (target) {
+                    }, function (target, newState) {
                         _this3.showNotify(target);
 
-                        if (_this3.default_state.AUTO_DELETE) {
-                            _this3.autoDelete(target);
+                        console.log(newState);
+
+                        if (newState.auto_delete) {
+                            _this3.autoDelete(target, newState.delay);
                         }
                     });
                 }
@@ -251,9 +271,10 @@ var Notify =
         }, {
             key: "openNotify",
             value: function openNotify(id) {
+                console.log(id);
                 document.querySelector('#' + id + ' .wnp-notify__close').removeEventListener('click', this.openNotify.bind(this, id));
-                this.state.NOTIFIES.forEach(function (target, index) {
-                    if (target.id === id) {
+                this.state.NOTIFIES.forEach(function (target) {
+                    if (target.elem.id === id) {
                         document.querySelector('#' + id).classList.add('isOpen');
                     }
                 });
@@ -262,8 +283,12 @@ var Notify =
             key: "getElement",
             value: function getElement(state) {
                 var prevState = state.prevState;
-                var element = prevState[prevState.length - 1];
-                return element;
+                var element = prevState[prevState.length - 1].elem;
+                var newState = prevState[prevState.length - 1].currentState;
+                return {
+                    element: element,
+                    newState: newState
+                };
             }
         }, {
             key: "move",
@@ -349,7 +374,11 @@ var Notify =
             value: function addNotify(state, callback) {
                 var _this6 = this;
 
-                var target = this.getElement(state);
+                var _this$getElement = this.getElement(state),
+                    element = _this$getElement.element,
+                    newState = _this$getElement.newState;
+
+                var target = element;
                 var area = document.querySelector("#".concat(this.state.WRAPPER_ID));
                 area.appendChild(target);
 
@@ -374,18 +403,18 @@ var Notify =
                 (0, _jquery.default)("#".concat(target.id)).bind('touchstart', function (touch) {
                     _this6.moveEvent(touch, target.id);
                 });
-                if (callback) callback(target);
+                if (callback) callback(target, newState);
             }
         }, {
             key: "showNotify",
             value: function showNotify(target) {
                 var tl = new _gsap.TimelineMax();
-                tl.to("#".concat(target.id), 0.3, {
+                tl.to("#".concat(target.id), 0.5, {
                     opacity: 1,
                     scale: 1,
                     y: 0,
                     ease: Back.easeOut.config(2)
-                });
+                }, 0.1);
             }
         }, {
             key: "hideNotify",
@@ -403,12 +432,12 @@ var Notify =
             }
         }, {
             key: "autoDelete",
-            value: function autoDelete(target) {
+            value: function autoDelete(target, delay) {
                 var _this7 = this;
 
                 setTimeout(function () {
                     _this7.deleteNotify(target.id);
-                }, this.default_state.SHOW_TIME);
+                }, delay);
             }
         }, {
             key: "deleteNotify",
@@ -420,9 +449,11 @@ var Notify =
                     var element = document.querySelector("#".concat(target));
 
                     if (element) {
-                        area.removeChild(element);
+                        setTimeout(function () {
+                            area.removeChild(element);
 
-                        _this8.updateState(element);
+                            _this8.updateState(element);
+                        }, 100);
                     }
                 });
             }
@@ -436,11 +467,11 @@ var Notify =
                         _this9.addNotify({
                             prevState: prevState,
                             newState: newState
-                        }, function (target) {
+                        }, function (target, state) {
                             _this9.showNotify(target);
 
-                            if (_this9.default_state.AUTO_DELETE) {
-                                _this9.autoDelete(target);
+                            if (state.auto_delete) {
+                                _this9.autoDelete(target, state.delay);
                             }
                         });
                     });

@@ -8,23 +8,20 @@ class Notify {
         const initial_state = props ? props : {};
         const {
             max_count,
-            auto_delete,
             default_message,
-            delay,
             selector,
-            custom_class,
-            link_title
+            link_title,
+            default_class,
+            default_styles
         } = initial_state;
 
         this.default_state = {
-            MAX_COUNT: max_count ? max_count : 5,
-            AUTO_DELETE: auto_delete ? auto_delete : false,
+            DEFAULT_STYLES: default_styles === false ? false : true,
+            MAX_COUNT: max_count ? Number(max_count) : 5,
             DEFAULT_MESSAGE: default_message ? default_message : 'Whynotpack notify',
-            DEFAULT_LINK_TITLE: link_title ? link_title : 'more',
-            SHOW_TIME: delay ? delay * 1000 : 5 * 1000,
+            DEFAULT_CLASS: default_class ? default_class : 'default',
+            DEFAULT_LINK_TITLE: link_title ? link_title : 'Show',
             SELECTOR: selector ? document.querySelector(selector) : document.querySelector('body'),
-            DEFAULT_CLASS: custom_class ? custom_class : 'default',
-            STYLES__APPEND__AREA: document.getElementsByTagName('HEAD')
         };
 
         this.state = {
@@ -35,7 +32,9 @@ class Notify {
 
         //init notify
         this.addWrapper(() => {
-            this.addStyles();
+            if (this.default_state.DEFAULT_STYLES) {
+                this.addStyles();
+            }
         });
         return this.makeNotify.bind(this);
 
@@ -81,7 +80,7 @@ class Notify {
 
     addStyles () {
         const stylesString = '@import url(https://fonts.googleapis.com/css?family=Roboto:300,500);\n' +
-            '@charset "UTF-8";.wnp-notify{width:300px;height:auto;margin:10px;-webkit-box-shadow:0 0 5px 0 rgba(0,0,0,.3);box-shadow:0 0 5px 0 rgba(0,0,0,.3);display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:start;-ms-flex-pack:start;justify-content:flex-start;background:#75a7be;color:#fff;position:relative;padding-left:60px;padding-right:30px;-webkit-transform:scale(.5) translateY(-30px);-ms-transform:scale(.5) translateY(-30px);transform:scale(.5) translateY(-30px);opacity:0}.wnp-notify,.wnp-notify>*{-webkit-box-sizing:border-box;box-sizing:border-box}@media (max-width:600px){.wnp-notify{width:calc(100% - 20px)}}.wnp-notify.isVisible{-webkit-transform:scale(1);-ms-transform:scale(1);transform:scale(1);opacity:1}.wnp-notify.error{background:#c74444}.wnp-notify.success{background:#3eb56e}.wnp-notify__wrapper{position:fixed;right:0;top:0;z-index:9999;font-family:Roboto,sans-serif}@media (max-width:600px){.wnp-notify__wrapper{width:100%}}.wnp-notify__wrapper.isVisible{opacity:1;visibility:visible}.wnp-notify__close{position:absolute;width:20px;height:20px;right:5px;top:5px;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;-webkit-box-align:center;-ms-flex-align:center;align-items:center;cursor:pointer}.wnp-notify__close:after{content:"✖";color:#fff;font-size:16px;font-weight:300;line-height:1}.wnp-notify__description{height:100%;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-align:start;-ms-flex-align:start;align-items:flex-start;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;padding:10px 0}.wnp-notify__message{height:0;overflow:hidden;font-size:14px;line-height:1.5;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.isOpen .wnp-notify__message{height:auto}.wnp-notify__text{font-size:16px;margin:5px 0;line-height:1.5}.wnp-notify__desc,.wnp-notify__text{font-weight:300;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.wnp-notify__desc{font-size:13px;cursor:pointer;line-height:1}.isOpen .wnp-notify__desc{display:none}.wnp-notify__icon{width:40px;height:100%;left:0;top:0;position:absolute;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;-webkit-box-align:center;-ms-flex-align:center;align-items:center;margin-right:20px}.wnp-notify__icon:before{content:"";position:absolute;width:100%;height:100%;top:0;left:0;background:#5291ae;-ms-flex-negative:0;flex-shrink:0;z-index:0}.error .wnp-notify__icon:before{background:#a90d0e}.success .wnp-notify__icon:before{background:#319f5d}.wnp-notify__icon:after{content:"!";-ms-flex-negative:0;flex-shrink:0;position:relative;font-size:20px;z-index:1;font-weight:600;line-height:1;color:#fff}.success .wnp-notify__icon:after{content:"✔"}.error .wnp-notify__icon:after{content:"✖"}\n'
+            '@charset "UTF-8";.wnp-notify{width:300px;height:auto;margin:10px;-webkit-box-shadow:0 0 5px 0 rgba(0,0,0,.3);box-shadow:0 0 5px 0 rgba(0,0,0,.3);display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:start;-ms-flex-pack:start;justify-content:flex-start;background:#75a7be;color:#fff;position:relative;padding-left:60px;padding-right:30px;-webkit-transform:scale(.5) translateY(-30px);-ms-transform:scale(.5) translateY(-30px);transform:scale(.5) translateY(-30px);opacity:0}.wnp-notify,.wnp-notify>*{-webkit-box-sizing:border-box;box-sizing:border-box}@media (max-width:600px){.wnp-notify{width:calc(100% - 20px)}}.wnp-notify.isVisible{-webkit-transform:scale(1);-ms-transform:scale(1);transform:scale(1);opacity:1}.wnp-notify.error{background:#c74444}.wnp-notify.success{background:#3eb56e}.wnp-notify__wrapper{position:fixed;right:0;top:0;z-index:9999;font-family:Roboto,sans-serif}@media (max-width:600px){.wnp-notify__wrapper{width:100%}}.wnp-notify__wrapper.isVisible{opacity:1;visibility:visible}.wnp-notify__close{position:absolute;width:20px;height:20px;right:5px;top:5px;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;-webkit-box-align:center;-ms-flex-align:center;align-items:center;cursor:pointer}.wnp-notify__close:after{content:"✖";color:#fff;font-size:16px;font-weight:300;line-height:1}.wnp-notify__description{width:100%;height:100%;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-align:start;-ms-flex-align:start;align-items:flex-start;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;padding:10px 0}.wnp-notify__message{width:100%;height:0;overflow:hidden;font-size:14px;line-height:1.5;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.isOpen .wnp-notify__message{height:auto}.wnp-notify__text{font-size:16px;margin:5px 0;line-height:1.5}.wnp-notify__desc,.wnp-notify__text{font-weight:300;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.wnp-notify__desc{font-size:13px;cursor:pointer;line-height:1}.isOpen .wnp-notify__desc{display:none}.wnp-notify__icon{width:40px;height:100%;left:0;top:0;position:absolute;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;-webkit-box-align:center;-ms-flex-align:center;align-items:center;margin-right:20px}.wnp-notify__icon:before{content:"";position:absolute;width:100%;height:100%;top:0;left:0;background:#5291ae;-ms-flex-negative:0;flex-shrink:0;z-index:0}.error .wnp-notify__icon:before{background:#a90d0e}.success .wnp-notify__icon:before{background:#319f5d}.wnp-notify__icon:after{content:"!";-ms-flex-negative:0;flex-shrink:0;position:relative;font-size:20px;z-index:1;font-weight:600;line-height:1;color:#fff}.success .wnp-notify__icon:after{content:"✔"}.error .wnp-notify__icon:after{content:"✖"}\n'
         styleInject(stylesString);
     }
 
@@ -106,7 +105,12 @@ class Notify {
             description,
             link_title,
             custom_class,
+            auto_delete,
+            delay,
         } = data;
+
+        const AUTO_DELETE = auto_delete ? auto_delete : false;
+        const DELAY = delay ? delay * 1000 : 5000;
 
         //variables
         const notify_type = type && type === 'error' || type === 'success' || type === 'info' ? type : 'no_type';
@@ -157,15 +161,16 @@ class Notify {
             notify_text_area.appendChild(notify_description);
             notify_text_area.appendChild(notify_link);
         }
-        if (callback) callback(notify);
+        if (callback) callback({element: notify, state: {auto_delete: AUTO_DELETE,delay: DELAY}});
     }
 
-    saveNotify (element, callback) {
+    saveNotify (data, callback) {
+        const {element, state} = data;
         if (this.state.NOTIFIES.length  < this.default_state.MAX_COUNT) {
-            this.state.NOTIFIES.push(element);
+            this.state.NOTIFIES.push({elem: element, currentState: state});
             if (callback) callback(this.state.NOTIFIES, this.state.WAITING_NOTIFIES);
         } else {
-            this.state.WAITING_NOTIFIES.push(element);
+            this.state.WAITING_NOTIFIES.push({elem: element, currentState: state});
             if (callback) callback(this.state.NOTIFIES, this.state.WAITING_NOTIFIES);
         }
     }
@@ -177,34 +182,37 @@ class Notify {
 
     updateState(data) {
         this.state.NOTIFIES.forEach((target, i) => {
-            if (target.id === data.id) {
+            if (target.elem.id === data.id) {
                 this.state.NOTIFIES.splice(i,1);
             }
         });
         if (this.state.WAITING_NOTIFIES.length > 0 && this.state.NOTIFIES.length < this.default_state.MAX_COUNT) {
             const waitingElement = this.state.WAITING_NOTIFIES.shift();
             this.state.NOTIFIES.push(waitingElement);
-            this.addNotify({prevState: this.state.NOTIFIES}, target => {
+            this.addNotify({prevState: this.state.NOTIFIES}, (target, newState) => {
                 this.showNotify(target);
-                if (this.default_state.AUTO_DELETE) {
-                    this.autoDelete(target);
+                console.log(newState);
+                if (newState.auto_delete) {
+                    this.autoDelete(target, newState.delay);
                 }
             })
         }
     }
 
     openNotify (id) {
+        console.log(id);
         document.querySelector('#' + id + ' .wnp-notify__close').removeEventListener('click', this.openNotify.bind(this, id));
-        this.state.NOTIFIES.forEach((target, index) => {
-            if (target.id === id) {
+        this.state.NOTIFIES.forEach(target => {
+            if (target.elem.id === id) {
                 document.querySelector('#' + id).classList.add('isOpen');
             }
         });
     }
     getElement (state) {
         const {prevState} = state;
-        const element = prevState[prevState.length - 1];
-        return element;
+        const element = prevState[prevState.length - 1].elem;
+        const newState = prevState[prevState.length - 1].currentState;
+        return {element, newState};
     }
 
     move (type, evt, id, client) {
@@ -263,7 +271,8 @@ class Notify {
     }
 
     addNotify (state, callback) {
-        const target = this.getElement(state);
+        const {element, newState} = this.getElement(state);
+        const target = element;
         const area = document.querySelector(`#${this.state.WRAPPER_ID}`);
         area.appendChild(target);
         if (this.checkChildren().length <= 0) {
@@ -286,12 +295,12 @@ class Notify {
         $(`#${target.id}`).bind('touchstart', (touch)=> {
             this.moveEvent(touch, target.id)
         });
-        if (callback) callback(target);
+        if (callback) callback(target, newState);
     }
 
     showNotify (target) {
         const tl = new TimelineMax();
-        tl.to(`#${target.id}`,0.3, {opacity: 1, scale: 1, y: 0, ease: Back.easeOut.config(2)});
+        tl.to(`#${target.id}`,0.5, {opacity: 1, scale: 1, y: 0, ease: Back.easeOut.config(2)}, 0.1);
     }
 
     hideNotify (target, callback) {
@@ -301,10 +310,10 @@ class Notify {
             }});
     }
 
-    autoDelete (target) {
+    autoDelete (target, delay) {
         setTimeout( () => {
             this.deleteNotify(target.id);
-        }, this.default_state.SHOW_TIME)
+        }, delay)
     }
 
     deleteNotify (target) {
@@ -312,8 +321,10 @@ class Notify {
             const area = document.querySelector(`#${this.state.WRAPPER_ID}`);
             const element = document.querySelector(`#${target}`);
             if (element) {
-                area.removeChild(element);
-                this.updateState(element);
+                setTimeout(() => {
+                    area.removeChild(element);
+                    this.updateState(element);
+                }, 100);
             }
         });
     }
@@ -321,10 +332,10 @@ class Notify {
     makeNotify (data) {
         this.createNotify(data, notify => {
             this.saveNotify(notify,(prevState,newState) => {
-                this.addNotify({prevState,newState}, target => {
+                this.addNotify({prevState,newState}, (target, state) => {
                     this.showNotify(target);
-                    if (this.default_state.AUTO_DELETE) {
-                        this.autoDelete(target);
+                    if (state.auto_delete) {
+                        this.autoDelete(target, state.delay);
                     }
                 })
             })
