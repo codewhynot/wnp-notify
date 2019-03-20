@@ -30,7 +30,7 @@ class Notify {
         this.state = {
             WRAPPER_ID: null,
             NOTIFIES: [],
-            WAITING_NOTIFIES: []
+            WAITING_NOTIFIES: [],
         };
 
         //init notify
@@ -185,7 +185,10 @@ class Notify {
             const waitingElement = this.state.WAITING_NOTIFIES.shift();
             this.state.NOTIFIES.push(waitingElement);
             this.addNotify({prevState: this.state.NOTIFIES}, target => {
-                this.showNotify(target)
+                this.showNotify(target);
+                if (this.default_state.AUTO_DELETE) {
+                    this.autoDelete(target);
+                }
             })
         }
     }
@@ -209,13 +212,19 @@ class Notify {
         const x = type === 'touch' ? evt.changedTouches[0].clientX - point : evt.clientX - point;
         let opacity = 0;
         TweenLite.to(`#${id}`, 0.2, {x: x, onUpdate: () => {
-                if (x < -40 || x > 40) {
-                    opacity--
-                    opacity = opacity / 2
+                if (x < -70 || x > 70) {
+                    opacity--;
+                    opacity = opacity / 2;
                 } else {
                     opacity = 1;
                 }
                 TweenLite.to(`#${id}`, 0.3, {opacity: opacity, onComplete: () => {
+                        if (x < 70) {
+                            TweenLite.to(`#${id}`, 0.3, {x: 0});
+                        }
+                        if (x > -70) {
+                            TweenLite.to(`#${id}`, 0.3, {x: 0});
+                        }
                         if (opacity < 0.8) {
                             TweenLite.to(`#${id}`, 0, {opacity: 0});
                             this.deleteNotify(id);
@@ -292,23 +301,31 @@ class Notify {
             }});
     }
 
+    autoDelete (target) {
+        setTimeout( () => {
+            this.deleteNotify(target.id);
+        }, this.default_state.SHOW_TIME)
+    }
+
     deleteNotify (target) {
         this.hideNotify(target, () => {
             const area = document.querySelector(`#${this.state.WRAPPER_ID}`);
             const element = document.querySelector(`#${target}`);
-            setTimeout(() => {
+            if (element) {
                 area.removeChild(element);
                 this.updateState(element);
-            }, 10)
+            }
         });
     }
 
     makeNotify (data) {
-
         this.createNotify(data, notify => {
             this.saveNotify(notify,(prevState,newState) => {
                 this.addNotify({prevState,newState}, target => {
-                    this.showNotify(target)
+                    this.showNotify(target);
+                    if (this.default_state.AUTO_DELETE) {
+                        this.autoDelete(target);
+                    }
                 })
             })
         });

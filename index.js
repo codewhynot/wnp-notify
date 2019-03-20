@@ -241,6 +241,10 @@ var Notify =
                         prevState: this.state.NOTIFIES
                     }, function (target) {
                         _this3.showNotify(target);
+
+                        if (_this3.default_state.AUTO_DELETE) {
+                            _this3.autoDelete(target);
+                        }
                     });
                 }
             }
@@ -273,7 +277,7 @@ var Notify =
                 _gsap.TweenLite.to("#".concat(id), 0.2, {
                     x: x,
                     onUpdate: function onUpdate() {
-                        if (x < -40 || x > 40) {
+                        if (x < -70 || x > 70) {
                             opacity--;
                             opacity = opacity / 2;
                         } else {
@@ -283,6 +287,18 @@ var Notify =
                         _gsap.TweenLite.to("#".concat(id), 0.3, {
                             opacity: opacity,
                             onComplete: function onComplete() {
+                                if (x < 70) {
+                                    _gsap.TweenLite.to("#".concat(id), 0.3, {
+                                        x: 0
+                                    });
+                                }
+
+                                if (x > -70) {
+                                    _gsap.TweenLite.to("#".concat(id), 0.3, {
+                                        x: 0
+                                    });
+                                }
+
                                 if (opacity < 0.8) {
                                     _gsap.TweenLite.to("#".concat(id), 0, {
                                         opacity: 0
@@ -386,32 +402,46 @@ var Notify =
                 });
             }
         }, {
-            key: "deleteNotify",
-            value: function deleteNotify(target) {
+            key: "autoDelete",
+            value: function autoDelete(target) {
                 var _this7 = this;
 
+                setTimeout(function () {
+                    _this7.deleteNotify(target.id);
+                }, this.default_state.SHOW_TIME);
+            }
+        }, {
+            key: "deleteNotify",
+            value: function deleteNotify(target) {
+                var _this8 = this;
+
                 this.hideNotify(target, function () {
-                    var area = document.querySelector("#".concat(_this7.state.WRAPPER_ID));
+                    var area = document.querySelector("#".concat(_this8.state.WRAPPER_ID));
                     var element = document.querySelector("#".concat(target));
-                    setTimeout(function () {
+
+                    if (element) {
                         area.removeChild(element);
 
-                        _this7.updateState(element);
-                    }, 10);
+                        _this8.updateState(element);
+                    }
                 });
             }
         }, {
             key: "makeNotify",
             value: function makeNotify(data) {
-                var _this8 = this;
+                var _this9 = this;
 
                 this.createNotify(data, function (notify) {
-                    _this8.saveNotify(notify, function (prevState, newState) {
-                        _this8.addNotify({
+                    _this9.saveNotify(notify, function (prevState, newState) {
+                        _this9.addNotify({
                             prevState: prevState,
                             newState: newState
                         }, function (target) {
-                            _this8.showNotify(target);
+                            _this9.showNotify(target);
+
+                            if (_this9.default_state.AUTO_DELETE) {
+                                _this9.autoDelete(target);
+                            }
                         });
                     });
                 });
