@@ -191,7 +191,6 @@ class Notify {
             this.state.NOTIFIES.push(waitingElement);
             this.addNotify({prevState: this.state.NOTIFIES}, (target, newState) => {
                 this.showNotify(target);
-                console.log(newState);
                 if (newState.auto_delete) {
                     this.autoDelete(target, newState.delay);
                 }
@@ -200,7 +199,6 @@ class Notify {
     }
 
     openNotify (id) {
-        console.log(id);
         document.querySelector('#' + id + ' .wnp-notify__close').removeEventListener('click', this.openNotify.bind(this, id));
         this.state.NOTIFIES.forEach(target => {
             if (target.elem.id === id) {
