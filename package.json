@@ -14,7 +14,7 @@
   },
   "homepage": "https://github.com/codewhynot/wnp-notify#readme",
   "dependencies": {
-    "gsap": "^2.1.2",
+    "gsap": "^3.6.0",
     "jquery": "^3.3.1",
     "style-inject": "^0.3.0"
   }
